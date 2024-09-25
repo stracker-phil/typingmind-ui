@@ -1,12 +1,44 @@
+const typingMindUiOrigin = (function () {
+    if (document.currentScript) {
+        const url = new URL(document.currentScript.src);
+        return `${url.origin}${url.pathname.substring(0, url.pathname.lastIndexOf('/') + 1)}`;
+    }
+
+    console.warn('Unable to determine script origin');
+    return '';
+})();
+
 class TypingMindUi {
-    constructor() {
+    #scriptOrigin = '';
+
+    constructor(scriptOrigin) {
         if (TypingMindUi.instance) {
             return TypingMindUi.instance;
         }
-        
+
         TypingMindUi.instance = this;
-        console.log('Initialize new UI');
+        this.#scriptOrigin = scriptOrigin;
+        this.applyTheme('purple');
+    }
+
+    get cssLink() {
+        let link = document.querySelector('link.custom-theme-style');
+
+        if (!link) {
+            link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.className = 'custom-theme-style';
+            document.head.appendChild(link);
+        }
+
+        return link;
+    }
+
+    applyTheme(name) {
+        this.cssLink.href = `${this.#scriptOrigin}theme-${name}.css`;
+
+        document.body.classList.add('custom-theme');
     }
 }
 
-new TypingMindUi()
+new TypingMindUi(typingMindUiOrigin);
