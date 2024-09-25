@@ -1,11 +1,13 @@
-const typingMindUiOrigin = (function () {
+const config = (function () {
     if (document.currentScript) {
         const url = new URL(document.currentScript.src);
-        return `${url.origin}${url.pathname.substring(0, url.pathname.lastIndexOf('/') + 1)}`;
+        const origin = `${url.origin}${url.pathname.substring(0, url.pathname.lastIndexOf('/') + 1)}`;
+        const theme = url.searchParams.get('theme') || 'default';
+        return {origin, theme};
     }
 
-    console.warn('Unable to determine script origin');
-    return '';
+    console.warn('Unable to determine script origin and theme');
+    return {origin: '', theme: ''};
 })();
 
 class TypingMindUi {
@@ -35,10 +37,17 @@ class TypingMindUi {
     }
 
     applyTheme(name) {
-        this.cssLink.href = `${this.#scriptOrigin}theme-${name}.css`;
+        const link = this.cssLink;
+
+        if (!name) {
+            link.href = '';
+            return;
+        }
+
+        link.href = `${this.#scriptOrigin}theme-${name}.css`;
 
         document.body.classList.add('custom-theme');
     }
 }
 
-new TypingMindUi(typingMindUiOrigin, 'claude');
+new TypingMindUi(config.origin, config.theme);

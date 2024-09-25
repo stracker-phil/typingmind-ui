@@ -547,8 +547,8 @@
 }
 
 [data-element-id="chat-space-middle-part"] {
-    padding-bottom: 0;
-    
+    padding-bottom: 0 !important;
+
     /* Hide the Typing Mind branding */
     > .relative > .relative > .flex.justify-center {
         display: none;
