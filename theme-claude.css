@@ -1,4 +1,4 @@
-@layer base, utility, theme;
+@layer base, theme;
 
 @layer base {
     :root {
@@ -30,28 +30,6 @@
         --bg: rgb(108, 106, 96);
         --hover: #373244;
         --btn-bg: rgb(24 24 27);
-    }
-}
-
-@layer utility {
-    .gradient-background {
-        background: radial-gradient(
-            circle at 10% 20%,
-            var(--gradient-stop-1) 0%,
-            var(--gradient-stop-2) 72.4%
-        );
-    }
-
-    .gradient-background-reverse {
-        background: radial-gradient(
-            circle at 10% 20%,
-            var(--gradient-stop-2) 0%,
-            var(--gradient-stop-1) 72.4%
-        );
-    }
-
-    .transition-background {
-        transition: background 0.2s ease;
     }
 }
 
@@ -413,28 +391,6 @@
             background: var(--hover-overlay);
         }
 
-        /* Brand styles */
-        [data-element-id='brand-icon'] {
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-        }
-
-        [data-element-id='brand-name'] {
-            background: linear-gradient(
-                109.6deg,
-                var(--brand-name-gradient-stop-1) 11.2%,
-                var(--brand-name-gradient-stop-2) 91.1%
-            );
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-
-        [data-element-id='brand-tagline'] {
-            color: var(--text-light);
-        }
-
         [data-element-id='document-type'] {
             color: var(--text-light);
         }
@@ -587,5 +543,14 @@
             /* These elements had empty rule sets in the original CSS */
             /* Add any necessary styles here if needed */
         }
+    }
+}
+
+[data-element-id="chat-space-middle-part"] {
+    padding-bottom: 0;
+    
+    /* Hide the Typing Mind branding */
+    > .relative > .relative > .flex.justify-center {
+        display: none;
     }
 }
