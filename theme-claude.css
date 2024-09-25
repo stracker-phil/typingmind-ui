@@ -50,11 +50,6 @@
         );
     }
 
-    .focus-outline {
-        outline: none;
-        box-shadow: 0 0 0 1.6px var(--border-outline);
-    }
-
     .transition-background {
         transition: background 0.2s ease;
     }
@@ -87,15 +82,24 @@
 
         /* Model setting button styles */
         [data-element-id='model-setting-button'] {
-            @extend .gradient-background;
+            background: radial-gradient(
+                circle at 10% 20%,
+                var(--gradient-stop-1) 0%,
+                var(--gradient-stop-2) 72.4%
+            );
             color: white;
 
             &:focus {
-                @extend .focus-outline;
+                outline: none;
+                box-shadow: 0 0 0 1.6px var(--border-outline);
             }
 
             &:hover {
-                @extend .gradient-background-reverse;
+                background: radial-gradient(
+                    circle at 10% 20%,
+                    var(--gradient-stop-2) 0%,
+                    var(--gradient-stop-1) 72.4%
+                );
             }
         }
 
@@ -244,15 +248,12 @@
             color: var(--user-msg-bg);
         }
 
-        [data-element-id='search-your-prompts']:focus {
-            @extend .focus-outline;
-        }
-
         [data-element-id='add-prompt-button'] {
             color: var(--user-msg-bg);
         }
 
         /* Input focus styles */
+        [data-element-id='search-your-prompts']:focus,
         [data-element-id='add-new-prompt-input']:focus,
         [data-element-id='add-new-prompt-description-input']:focus,
         [data-element-id='add-new-prompt-title-input']:focus,
@@ -268,12 +269,13 @@
         [data-element-id='new-system-instruction']:focus,
         [data-element-id='search-input']:focus,
         [data-element-id='sort-characters']:focus,
-        [data-element-id='search-characters']:focus {
-            @extend .focus-outline;
-        }
-
-        [data-element-id='add-new-prompt-tags-input'] input:focus {
-            @extend .focus-outline;
+        [data-element-id='search-characters']:focus,
+        [data-element-id='add-new-prompt-tags-input'] input:focus,
+        [data-element-id='one-training-example-block'] textarea:focus,
+        [data-element-id='plugin-url-input']:focus,
+        [data-element-id='chat-folder'] textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 1.6px var(--border-outline);
         }
 
         /* Button styles */
@@ -326,10 +328,6 @@
             color: var(--user-msg-bg);
         }
 
-        [data-element-id='one-training-example-block'] textarea:focus {
-            @extend .focus-outline;
-        }
-
         /* Plugin styles */
         [data-element-id='create-new-plugin-button'],
         [data-element-id='import-plugin-button'] {
@@ -350,19 +348,12 @@
             }
         }
 
-        [data-element-id='plugin-url-input']:focus {
-            @extend .focus-outline;
-        }
 
         /* Chat folder styles */
         [data-element-id='chat-folder'] {
             &:hover,
             &:focus-within {
                 background: var(--light-bg);
-            }
-
-            textarea {
-                @extend .focus-outline;
             }
         }
 
