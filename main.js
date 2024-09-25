@@ -11,14 +11,14 @@ const typingMindUiOrigin = (function () {
 class TypingMindUi {
     #scriptOrigin = '';
 
-    constructor(scriptOrigin) {
+    constructor(scriptOrigin, defaultTheme) {
         if (TypingMindUi.instance) {
             return TypingMindUi.instance;
         }
 
         TypingMindUi.instance = this;
         this.#scriptOrigin = scriptOrigin;
-        this.applyTheme('purple');
+        this.applyTheme(defaultTheme);
     }
 
     get cssLink() {
@@ -41,4 +41,4 @@ class TypingMindUi {
     }
 }
 
-new TypingMindUi(typingMindUiOrigin);
+new TypingMindUi(typingMindUiOrigin, 'claude');
