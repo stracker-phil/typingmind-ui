@@ -4,7 +4,7 @@ const config = (function () {
         const origin = `${url.origin}${url.pathname.substring(0, url.pathname.lastIndexOf('/') + 1)}`;
         let theme = url.searchParams.get('theme') || '';
 
-        // Check localStorage for a saved theme
+        // Check localStorage for a saved themes
         const savedTheme = localStorage.getItem('custom-theme');
         if (savedTheme) {
             theme = savedTheme;
