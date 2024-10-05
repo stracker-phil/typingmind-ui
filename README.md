@@ -38,3 +38,16 @@ When the tunnel is working, add the `dev-main.js` script as a Typing Mind extens
 **Why is there a "dev-main.js"?**
 
 Both, Typing Mind and Cloudflare implement a cache that can cause extensions to be out of date. For development, we need to disable caching, which is the _only_ thing that `dev-main.js` is doing.
+
+### Prepare for production
+
+```sh
+npm run build
+```
+
+Commit all changes - especially the `dist` folder - to the git repo and push it to GitHub.
+
+Make sure that the GitHub repo is used for a GitHub page; set up a new page if needed.
+
+Add the extension to your Typing Mind account:
+`https://<USER>.github.io/<REPO>/main.js?v=<YYYY-MM-DD>`
