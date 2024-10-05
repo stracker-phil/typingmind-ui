@@ -6,6 +6,7 @@ module.exports = {
 	mode: 'development',
 	entry: {
 		main: './src/index.js',
+		'dev-main': './src/dev-main.js',
 		'theme/claude': './src/theme/claude/theme.js',
 		'theme/purple': './src/theme/purple/theme.js',
 	},
