@@ -1,7 +1,9 @@
 import Config from './lib/config';
+import Asset from './lib/asset';
 
 class TypingMindUi {
 	#config;
+	#themeAsset;
 
 	constructor(config) {
 		if (TypingMindUi.instance) {
@@ -10,34 +12,9 @@ class TypingMindUi {
 
 		TypingMindUi.instance = this;
 		this.#config = config;
+		this.#themeAsset = new Asset('custom-theme', this.#config.origin);
 
-		this.#applyTheme();
-	}
-
-	get themeLink() {
-		let element = document.querySelector('link.custom-theme-style');
-
-		if (!element) {
-			element = document.createElement('link');
-			element.rel = 'stylesheet';
-			element.className = 'custom-theme-style';
-			document.head.appendChild(element);
-		}
-
-		return element;
-	}
-
-	get themeScript() {
-		let element = document.querySelector('script.custom-theme-script');
-
-		if (!element) {
-			element = document.createElement('script');
-			element.defer = true;
-			element.className = 'custom-theme-script';
-			document.head.appendChild(element);
-		}
-
-		return element;
+		this.#loadTheme();
 	}
 
 	get theme() {
@@ -46,23 +23,21 @@ class TypingMindUi {
 
 	set theme(name) {
 		this.#config.theme = name;
-		this.#applyTheme();
+		this.#loadTheme();
 	}
 
-	#applyTheme() {
-		const link = this.themeLink;
-		const script = this.themeScript;
+	#loadTheme() {
 		const theme = this.#config.theme;
 
 		if (!theme) {
-			link.href = '';
-			script.src = '';
+			this.#themeAsset.unload();
 			document.body.classList.remove('custom-theme');
 			return;
 		}
 
-		link.href = `${this.#config.origin}/theme/${theme}.css`;
-		script.src = `${this.#config.origin}/theme/${theme}.js`;
+		this.#themeAsset.style = `theme/${theme}.css`;
+		this.#themeAsset.script = `theme/${theme}.js`;
+		this.#themeAsset.load();
 
 		document.body.classList.add('custom-theme');
 	}
