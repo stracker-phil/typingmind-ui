@@ -1,10 +1,12 @@
 import Config from './lib/config';
 import ThemeLoader from './app/themeLoader';
+import PageClassManager from './app/pageClassManager';
 import Asset from './lib/asset';
 
 class TypingMindUi {
 	#config;
 	#themeLoader;
+	#pageClassManager;
 
 	constructor(config) {
 		if (TypingMindUi.instance) {
@@ -14,9 +16,11 @@ class TypingMindUi {
 		TypingMindUi.instance = this;
 		this.#config = config;
 		this.#themeLoader = new ThemeLoader(this.#config);
+		this.#pageClassManager = new PageClassManager();
 
 		Asset.bypassCache(this.#config.nocache)
 
+		this.#pageClassManager.observe();
 		this.#loadTheme();
 	}
 
