@@ -1,0 +1,26 @@
+/**
+ * Style individual pages, like adjusting the layout of the Settings- or tje
+ * Agents-page.
+ * If you need to change styles that should affect more than a single page
+ * then consider creating a new "2-component" file instead of using this file.
+ */
+@layer theme {
+	[data-app-page=chat] {
+	}
+
+	[data-app-page=agents] {
+	}
+
+	[data-app-page=plugins] {
+	}
+
+	[data-app-page=models] {
+	}
+
+	[data-app-page=teams] {
+	}
+
+	[data-app-page=settings] {
+	}
+
+}

@@ -1,0 +1,36 @@
+/**
+ * Customize the theme.
+ * In a default theme, these are the only values you need to change.
+ */
+@layer base {
+	:root {
+		/* Light theme variables */
+		--bg-workspace: #ffffff;
+		--bg: #ffffff;
+		--hover: #f3f4f6;
+		--user-msg-bg: #8c63f7;
+		--hover-overlay: #9067f812;
+		--border-outline: rgb(126, 34, 206);
+		--text-dark: #2f2e33;
+		--text-light: #84838d;
+		--side-bar-bg: #2E2055FF;
+		--side-bar-btn: #9570f8;
+		--side-bar-hover: #795bc7;
+		--placeholder-text: #f8f6fb;
+		--gradient-stop-1: #e59dfe;
+		--gradient-stop-2: #5b02cd;
+		--chat-item-bg: rgba(117, 89, 197, 0.6);
+		--brand-name-gradient-stop-1: rgb(80, 35, 217);
+		--brand-name-gradient-stop-2: rgb(217, 35, 189);
+		--btn-bg: #ffffff;
+		--light-bg: #8c63f740;
+	}
+
+	.dark {
+		/* Dark theme variable overrides */
+		--bg-workspace: #1A1625;
+		--bg: rgb(108, 106, 96);
+		--hover: #373244;
+		--btn-bg: rgb(24 24 27);
+	}
+}
