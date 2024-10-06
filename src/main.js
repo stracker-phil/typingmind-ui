@@ -1,9 +1,10 @@
 import Config from './lib/config';
+import ThemeLoader from './app/themeLoader';
 import Asset from './lib/asset';
 
 class TypingMindUi {
 	#config;
-	#themeAsset;
+	#themeLoader;
 
 	constructor(config) {
 		if (TypingMindUi.instance) {
@@ -12,7 +13,9 @@ class TypingMindUi {
 
 		TypingMindUi.instance = this;
 		this.#config = config;
-		this.#themeAsset = new Asset('custom-theme', this.#config.origin);
+		this.#themeLoader = new ThemeLoader(this.#config);
+
+		Asset.bypassCache(this.#config.nocache)
 
 		this.#loadTheme();
 	}
@@ -27,19 +30,7 @@ class TypingMindUi {
 	}
 
 	#loadTheme() {
-		const theme = this.#config.theme;
-
-		if (!theme) {
-			this.#themeAsset.unload();
-			document.body.classList.remove('custom-theme');
-			return;
-		}
-
-		this.#themeAsset.style = `theme/${theme}.css`;
-		this.#themeAsset.script = `theme/${theme}.js`;
-		this.#themeAsset.load();
-
-		document.body.classList.add('custom-theme');
+		this.#themeLoader.apply(this.#config.theme);
 	}
 }
 

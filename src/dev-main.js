@@ -8,6 +8,7 @@ import Asset from './lib/asset';
  *
  * For production environments, this script should not be used.
  */
+Asset.bypassCache(true)
 const devAsset = new Asset('dev-main', config.origin);
-devAsset.script = `main.js?t=${Date.now()}`;
+devAsset.script = 'main.js';
 devAsset.load();

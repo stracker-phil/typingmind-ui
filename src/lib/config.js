@@ -7,12 +7,20 @@ class Config {
 
 	constructor() {
 		const currentScript = document.currentScript;
+
 		if (currentScript) {
 			this.#scriptUrl = new URL(currentScript.src);
 		} else {
 			console.warn('Unable to determine script URL.');
 			this.#scriptUrl = null;
 		}
+	}
+
+	get nocache() {
+		if (!this.#scriptUrl) {
+			return false;
+		}
+		return !!this.#scriptUrl.searchParams.get('nocache');
 	}
 
 	get origin() {

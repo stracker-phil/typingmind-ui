@@ -1,4 +1,6 @@
 class Asset {
+	static #bypassCache = false;
+
 	#id;
 	#baseUrl;
 	#dirty = false;
@@ -10,6 +12,10 @@ class Asset {
 	constructor(id, baseUrl) {
 		this.#id = id;
 		this.#baseUrl = baseUrl;
+	}
+
+	static bypassCache(state) {
+		Asset.#bypassCache = state;
 	}
 
 	set script(script) {
@@ -29,6 +35,10 @@ class Asset {
 	unload() {
 		this.#unloadScript();
 		this.#unloadStyle();
+
+		this.#style = '';
+		this.#script = '';
+		this.#dirty = false;
 	}
 
 	load() {
@@ -36,8 +46,10 @@ class Asset {
 			return;
 		}
 
-		this.unload();
+		this.#unloadScript();
 		this.#loadScript();
+
+		this.#unloadStyle();
 		this.#loadStyle();
 
 		this.#dirty = false;
@@ -59,6 +71,16 @@ class Asset {
 		this.#styleElement = null;
 	}
 
+	#buildUrl(filename) {
+		let url = `${this.#baseUrl}${filename}`;
+
+		if (Asset.#bypassCache) {
+			url += `?nocache=${Date.now()}`;
+		}
+
+		return url;
+	}
+
 	#loadScript() {
 		if (!this.#script) {
 			return;
@@ -66,7 +88,7 @@ class Asset {
 
 		this.#scriptElement = document.createElement('script');
 		this.#scriptElement.id = `${this.#id}-script`;
-		this.#scriptElement.src = `${this.#baseUrl}${this.#script}`;
+		this.#scriptElement.src = this.#buildUrl(this.#script);
 		this.#scriptElement.defer = true;
 		document.head.appendChild(this.#scriptElement);
 	}
@@ -79,7 +101,7 @@ class Asset {
 		this.#styleElement = document.createElement('link');
 		this.#styleElement.id = `${this.#id}-style`;
 		this.#styleElement.rel = 'stylesheet';
-		this.#styleElement.href = `${this.#baseUrl}${this.#style}`;
+		this.#styleElement.href = this.#buildUrl(this.#style);
 		document.head.appendChild(this.#styleElement);
 	}
 }
