@@ -6,3 +6,21 @@
  *
  * In a default theme, this file should be left empty.
  */
+[data-element-id="chat-space-middle-part"] {
+	padding-bottom: 0 !important;
+
+	/* Hide the Typing Mind branding */
+	> .relative > .relative > .flex.justify-center {
+		display: none;
+	}
+	> .relative + div:empty {
+		display: none;
+	}
+}
+
+[data-element-id="workspace-bar"] {
+	/* Hide the "Teams" button in the sidebar */
+	[data-element-id="workspace-tab-teams"] {
+		display: none !important;
+	}
+}
