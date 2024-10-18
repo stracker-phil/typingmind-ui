@@ -1,9 +1,20 @@
-import './style.scss'
+import './style.scss';
 
-import svgNewChat from './new-chat.svg'
-import svgOpenSidebar from './open-sidebar.svg'
+import BaseTheme from '../Theme';
+import icons from './icons';
 
-const icons = new Map();
+class Theme extends BaseTheme {
+	onInit() {
+		if (this.IconReplacer) {
+			this.IconReplacer.config = icons;
+		}
 
-icons.set('new-chat', svgNewChat);
-icons.set('open-sidebar', svgOpenSidebar);
+		console.log('CLAUDE initialized');
+	}
+
+	onCleanup() {
+		console.log('CLAUDE cleaned up');
+	}
+}
+
+export default new Theme();
