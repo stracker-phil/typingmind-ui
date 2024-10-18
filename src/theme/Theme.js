@@ -25,21 +25,29 @@ class ThemeBase {
 	 */
 	#boundCleanupHandler;
 
+	/**
+	 * @type {Function} Bound refresh handler
+	 */
+	#boundRefreshHandler;
+
 	constructor() {
 		this.#eventSystem = new EventSystem();
 		this.#boundInitHandler = this.#handleInit.bind(this);
 		this.#boundCleanupHandler = this.#handleCleanup.bind(this);
+		this.#boundRefreshHandler = this.#handleRefresh.bind(this);
 		this.#addEventListeners();
 	}
 
 	#addEventListeners() {
 		this.#eventSystem.observe(THEME_EVENTS.init, this.#boundInitHandler);
 		this.#eventSystem.observe(THEME_EVENTS.cleanup, this.#boundCleanupHandler);
+		this.#eventSystem.observe(THEME_EVENTS.refresh, this.#boundRefreshHandler);
 	}
 
 	#removeEventListeners() {
 		this.#eventSystem.unobserve(THEME_EVENTS.init, this.#boundInitHandler);
 		this.#eventSystem.unobserve(THEME_EVENTS.cleanup, this.#boundCleanupHandler);
+		this.#eventSystem.unobserve(THEME_EVENTS.refresh, this.#boundRefreshHandler);
 	}
 
 	/**
@@ -58,19 +66,29 @@ class ThemeBase {
 		this.#removeEventListeners();
 	}
 
+	#handleRefresh({ detail }) {
+		if (!detail || 'object' !== typeof detail) {
+			return;
+		}
+
+		this.onRefresh(detail);
+	}
+
 	/**
 	 * @return {IconReplacer|null} The IconReplacer instance.
 	 */
 	get IconReplacer() {
 		return this.#iconReplacer;
 	}
-
 	onInit() {
 		console.log('Theme initialized');
 	}
 
 	onCleanup() {
 		console.log('Theme cleaned up');
+	}
+
+	onRefresh(state) {
 	}
 }
 

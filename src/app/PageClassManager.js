@@ -2,6 +2,7 @@
  * Observes changes in the current "page" and adds a CSS class to the body element that reflects
  * the current state. Pages are accessible via the buttons in the workspace bar.
  */
+import { THEME_EVENTS } from './EventSystem';
 
 const ACTIVE_BUTTON_CLASS = 'active-button';
 
@@ -34,10 +35,12 @@ function loopButtons(callback) {
 }
 
 class PageClassManager {
+	#eventSystem;
 	#activeSlug = '';
 	#activeTab = null;
 
-	constructor() {
+	constructor(eventSystem) {
+		this.#eventSystem = eventSystem;
 		this.onButtonClick = this.onButtonClick.bind(this);
 		this.refreshCurrentPage();
 	}
@@ -55,6 +58,8 @@ class PageClassManager {
 
 		if (this.#activeTab) {
 			this.#activeTab.classList.add(ACTIVE_BUTTON_CLASS);
+
+			this.#eventSystem.dispatch(THEME_EVENTS.refresh, { activeTab: this.activeSlug });
 		}
 	}
 

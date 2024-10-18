@@ -21,8 +21,8 @@ class TypingMindUi {
 		this.#config = config;
 		this.#eventSystem = new EventSystem();
 		this.#iconReplacer = new IconReplacer();
-		this.#pageClassManager = new PageClassManager();
 		this.#themeLoader = new ThemeLoader(this.#config, this.#eventSystem, this.#iconReplacer);
+		this.#pageClassManager = new PageClassManager(this.#eventSystem);
 
 		Asset.bypassCache(this.#config.nocache);
 

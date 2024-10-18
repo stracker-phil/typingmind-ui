@@ -1,6 +1,7 @@
 export const THEME_EVENTS = {
 	init: 'theme:init',
 	cleanup: 'theme:cleanup',
+	refresh: 'theme:refresh',
 };
 
 class EventSystem {
