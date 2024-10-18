@@ -3,6 +3,7 @@ import Asset from './lib/Asset';
 import ThemeLoader from './app/ThemeLoader';
 import PageClassManager from './app/PageClassManager';
 import IconReplacer from './app/IconReplacer';
+import SidebarObserver from './app/SidebarObserver';
 import EventSystem from './app/EventSystem';
 
 class TypingMindUi {
@@ -10,6 +11,7 @@ class TypingMindUi {
 	#eventSystem;
 	#themeLoader;
 	#pageClassManager;
+	#sidebarObserver;
 	#iconReplacer;
 
 	constructor(config) {
@@ -23,10 +25,12 @@ class TypingMindUi {
 		this.#iconReplacer = new IconReplacer();
 		this.#themeLoader = new ThemeLoader(this.#config, this.#eventSystem, this.#iconReplacer);
 		this.#pageClassManager = new PageClassManager(this.#eventSystem);
+		this.#sidebarObserver = new SidebarObserver(this.#eventSystem);
 
 		Asset.bypassCache(this.#config.nocache);
 
 		this.#pageClassManager.start();
+		this.#sidebarObserver.start();
 		this.#loadTheme();
 	}
 
