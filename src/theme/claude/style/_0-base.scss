@@ -1,6 +1,7 @@
 /**
  * Defines the theme's base typography and very generic styles, like line-height.
  */
+
 /* Global styles */
 body {
 	margin: 0;
@@ -8,43 +9,4 @@ body {
 	font-family: 'Arial', sans-serif;
 	background-color: var(--bg);
 	color: var(--text-dark);
-}
-
-a {
-	text-decoration: none;
-	color: inherit;
-}
-
-button {
-	cursor: pointer;
-	border: none;
-	background: none;
-}
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-	margin: 0;
-	font-weight: 700;
-}
-
-p {
-	margin: 0;
-	line-height: 1.5;
-}
-
-/* Utility classes */
-.text-center {
-	text-align: center;
-}
-
-.text-right {
-	text-align: right;
-}
-
-.text-left {
-	text-align: left;
-}
-
-.hidden {
-	display: none;
 }
