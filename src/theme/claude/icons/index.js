@@ -1,6 +1,7 @@
 import svgChats from './chats.svg';
 import svgNewChat from './new-chat.svg';
-import svgOpenSidebar from './open-sidebar.svg';
+import svgOpenSidebar from './sidebar-open.svg';
+import svgClosedSidebar from './sidebar-closed.svg';
 import svgSettings from './settings.svg';
 import svgSearch from './search.svg';
 import svgTrash from './trash.svg';
@@ -30,9 +31,14 @@ icons.push({
 
 icons.push({
 	match: 'M3 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z',
-	replace: (el) => {
+	replace: (el, state) => {
+		if (false === state.sidebarOpen) {
+			return svgClosedSidebar;
+		}
+
 		return svgOpenSidebar;
 	},
+	dependencies: ['sidebarOpen'],
 });
 
 icons.push({
