@@ -3,6 +3,8 @@ const MUTATION_DEBOUNCE_DELAY = 50;
 export default class IconReplacer {
 	#iconMapping = [];
 	#modifiedIcons = new Map();
+	#state = {};
+	#stateSubscriptions = new Map();
 	#observer;
 	#debounceTimer;
 
@@ -19,6 +21,18 @@ export default class IconReplacer {
 		}
 	}
 
+	set state(newState) {
+		const changedProperties = new Set();
+
+		for (const [key, value] of Object.entries(newState)) {
+			if (this.#state[key] !== value) {
+				this.#state[key] = value;
+				changedProperties.add(key);
+			}
+		}
+		this.#refreshAffectedIcons(changedProperties);
+	}
+
 	#apply(iconMapping) {
 		this.#reset();
 		this.#iconMapping = iconMapping;
@@ -32,6 +46,7 @@ export default class IconReplacer {
 		}
 		this.#iconMapping = [];
 		this.#modifiedIcons.clear();
+		this.#stateSubscriptions.clear();
 		this.#stopObserver();
 	}
 
@@ -54,8 +69,40 @@ export default class IconReplacer {
 		}
 	}
 
+	#subscribeToStateChanges(config, icon) {
+		if (!config.dependencies) {
+			return;
+		}
+
+		for (const prop of config.dependencies) {
+			if (!this.#stateSubscriptions.has(prop)) {
+				this.#stateSubscriptions.set(prop, new Set());
+			}
+
+			this.#stateSubscriptions.get(prop).add(icon);
+		}
+	}
+
+	#refreshAffectedIcons(changedProperties) {
+		const affectedIcons = new Set();
+
+		for (const prop of changedProperties) {
+			const icons = this.#stateSubscriptions.get(prop);
+
+			if (!icons) {
+				continue;
+			}
+			icons.forEach(icon => affectedIcons.add(icon));
+		}
+
+		for (const theme of affectedIcons) {
+			theme.apply();
+		}
+	}
+
 	#handleMutations(mutations) {
 		clearTimeout(this.#debounceTimer);
+
 		this.#debounceTimer = setTimeout(() => {
 			const nodesToCheck = new Set();
 
@@ -88,8 +135,15 @@ export default class IconReplacer {
 
 	#applySvgTheme(svg) {
 		if (!svg.__theme) {
-			this.#createSvgTheme(svg);
+			const theme = this.#createSvgTheme(svg);
+
+			if (!theme) {
+				return;
+			}
+
+			svg.__theme = theme;
 		}
+
 		svg.__theme.apply();
 	}
 
@@ -98,12 +152,16 @@ export default class IconReplacer {
 		const config = this.#findMatch(svg);
 		let appliedIcon = '';
 
-		svg.__theme = {
+		if (!config) {
+			return null;
+		}
+
+		const theme = {
 			apply: () => {
 				if (!config) {
 					return;
 				}
-				const newIcon = config.replace(svg);
+				const newIcon = config.replace(svg, this.#state);
 
 				if (newIcon && appliedIcon !== newIcon) {
 					appliedIcon = newIcon;
@@ -111,12 +169,17 @@ export default class IconReplacer {
 					this.#modifiedIcons.set(svg, svg.__theme);
 				}
 			},
+
 			reset: () => {
 				svg.innerHTML = originalClone.innerHTML;
 				this.#restoreAttributes(svg, originalClone);
 				this.#modifiedIcons.delete(svg);
 			},
 		};
+
+		this.#subscribeToStateChanges(config, theme);
+
+		return theme;
 	}
 
 	#findMatch(svg) {

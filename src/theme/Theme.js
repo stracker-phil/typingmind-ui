@@ -91,16 +91,16 @@ class ThemeBase {
 	}
 
 	onInit() {
-		console.log('Theme initialized');
+		console.debug('Theme initialized');
 	}
 
 	onCleanup() {
-		console.log('Theme cleaned up');
+		console.debug('Theme cleaned up');
 	}
 
 	onRefresh(state) {
 		if (this.IconReplacer) {
-			// todo ...
+			this.IconReplacer.state = state;
 		}
 	}
 }
