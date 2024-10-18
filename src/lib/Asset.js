@@ -1,6 +1,5 @@
 class Asset {
 	static #bypassCache = false;
-
 	#id;
 	#baseUrl;
 	#dirty = false;
@@ -32,25 +31,41 @@ class Asset {
 		}
 	}
 
+	get scriptElement() {
+		return this.#scriptElement;
+	}
+
+	get styleElement() {
+		return this.#styleElement;
+	}
+
 	unload() {
 		this.#unloadScript();
 		this.#unloadStyle();
-
 		this.#style = '';
 		this.#script = '';
 		this.#dirty = false;
 	}
 
-	load() {
+	async load() {
 		if (!this.#dirty) {
 			return;
 		}
 
 		this.#unloadScript();
-		this.#loadScript();
-
 		this.#unloadStyle();
-		this.#loadStyle();
+
+		const loadPromises = [];
+
+		if (this.#script) {
+			loadPromises.push(this.#loadScript());
+		}
+
+		if (this.#style) {
+			loadPromises.push(this.#loadStyle());
+		}
+
+		await Promise.all(loadPromises);
 
 		this.#dirty = false;
 	}
@@ -73,36 +88,33 @@ class Asset {
 
 	#buildUrl(filename) {
 		let url = `${this.#baseUrl}${filename}`;
-
 		if (Asset.#bypassCache) {
 			url += `?nocache=${Date.now()}`;
 		}
-
 		return url;
 	}
 
 	#loadScript() {
-		if (!this.#script) {
-			return;
-		}
-
-		this.#scriptElement = document.createElement('script');
-		this.#scriptElement.id = `${this.#id}-script`;
-		this.#scriptElement.src = this.#buildUrl(this.#script);
-		this.#scriptElement.defer = true;
-		document.head.appendChild(this.#scriptElement);
+		return new Promise((resolve, reject) => {
+			this.#scriptElement = document.createElement('script');
+			this.#scriptElement.id = `${this.#id}-script`;
+			this.#scriptElement.src = this.#buildUrl(this.#script);
+			this.#scriptElement.onload = resolve;
+			this.#scriptElement.onerror = reject;
+			document.head.appendChild(this.#scriptElement);
+		});
 	}
 
 	#loadStyle() {
-		if (!this.#style) {
-			return;
-		}
-
-		this.#styleElement = document.createElement('link');
-		this.#styleElement.id = `${this.#id}-style`;
-		this.#styleElement.rel = 'stylesheet';
-		this.#styleElement.href = this.#buildUrl(this.#style);
-		document.head.appendChild(this.#styleElement);
+		return new Promise((resolve, reject) => {
+			this.#styleElement = document.createElement('link');
+			this.#styleElement.id = `${this.#id}-style`;
+			this.#styleElement.rel = 'stylesheet';
+			this.#styleElement.href = this.#buildUrl(this.#style);
+			this.#styleElement.onload = resolve;
+			this.#styleElement.onerror = reject;
+			document.head.appendChild(this.#styleElement);
+		});
 	}
 }
 
