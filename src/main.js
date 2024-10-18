@@ -26,7 +26,7 @@ class TypingMindUi {
 
 		Asset.bypassCache(this.#config.nocache);
 
-		this.#pageClassManager.observe();
+		this.#pageClassManager.start();
 		this.#loadTheme();
 	}
 

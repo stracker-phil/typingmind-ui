@@ -105,13 +105,13 @@ class PageClassManager {
 		this.activeTab = event.currentTarget;
 	};
 
-	observe() {
+	start() {
 		loopButtons((button) => {
 			button.addEventListener('click', this.onButtonClick);
 		});
 	}
 
-	unobserve() {
+	stop() {
 		loopButtons((button) => {
 			button.removeEventListener('click', this.onButtonClick);
 		});
