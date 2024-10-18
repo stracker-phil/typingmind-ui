@@ -7,34 +7,68 @@ import Asset from '../lib/Asset';
 
 const CUSTOM_THEME_CLASS = 'custom-theme';
 
+const THEME_INIT_EVENT = 'theme-init';
+const THEME_CLEANUP_EVENT = 'theme-cleanup';
+
 class ThemeLoader {
 	#asset;
 	#iconReplacer;
+	#currentTheme = null;
 
 	constructor(config, iconReplacer) {
 		this.#asset = new Asset('theme', config.origin);
 		this.#iconReplacer = iconReplacer;
 	}
 
-	apply(theme) {
-		if (!theme) {
+	async apply(theme) {
+		if (this.#currentTheme) {
 			this.#unload();
-		} else {
-			this.#load(theme);
+		}
+
+		if (theme) {
+			await this.#load(theme);
 		}
 	}
 
-	#load(theme) {
+	async #load(theme) {
+		this.#currentTheme = theme;
 		this.#asset.style = `theme/${theme}.css`;
 		this.#asset.script = `theme/${theme}.js`;
-		this.#asset.load();
 
-		document.body.classList.add(CUSTOM_THEME_CLASS);
+		try {
+			await this.#asset.load();
+
+			// Dispatch the init event after the assets have loaded
+			const initEvent = new CustomEvent(THEME_INIT_EVENT, {
+				detail: { iconReplacer: this.#iconReplacer },
+			});
+			document.dispatchEvent(initEvent);
+
+			document.body.classList.add(CUSTOM_THEME_CLASS);
+		} catch (error) {
+			console.error(`Failed to load theme: ${theme}`, error);
+			this.#unload();
+		}
 	}
 
 	#unload() {
+		if (!this.#currentTheme) {
+			return;
+		}
+
+		// Dispatch the cleanup event
+		const cleanupEvent = new CustomEvent(THEME_CLEANUP_EVENT);
+		document.dispatchEvent(cleanupEvent);
+
 		this.#asset.unload();
 		document.body.classList.remove(CUSTOM_THEME_CLASS);
+
+		// Reset icon replacements
+		if (this.#iconReplacer) {
+			this.#iconReplacer.config = null;
+		}
+
+		this.#currentTheme = null;
 	}
 }
 
