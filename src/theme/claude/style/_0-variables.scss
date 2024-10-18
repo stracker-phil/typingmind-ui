@@ -1,4 +1,12 @@
 /**
+ * Whether to use a "boxed" layout with borders around elements like buttons,
+ * the sidebar, input fields, ...
+ *
+ * Values: 0|1
+ */
+$drawBoxes: 0;
+
+/**
  * Customize the theme.
  * In a default theme, these are the only values you need to change.
  */

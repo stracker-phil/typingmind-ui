@@ -10,3 +10,13 @@ body {
 	background-color: var(--bg);
 	color: var(--text-dark);
 }
+
+@if $drawBoxes == 0 {
+	.border,
+	.border-l,
+	.border-t,
+	.border-b,
+	.border-r {
+		border: none;
+	}
+}
