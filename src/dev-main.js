@@ -1,5 +1,5 @@
-import config from './lib/config';
-import Asset from './lib/asset';
+import config from './lib/Config';
+import Asset from './lib/Asset';
 
 /**
  * This script is the main entry point during development.

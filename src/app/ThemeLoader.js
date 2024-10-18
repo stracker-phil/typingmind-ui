@@ -3,7 +3,7 @@
  * Every theme has a single JS and CSS file.
  */
 
-import Asset from '../lib/asset';
+import Asset from '../lib/Asset';
 
 const CUSTOM_THEME_CLASS = 'custom-theme';
 

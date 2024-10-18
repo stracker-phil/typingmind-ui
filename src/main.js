@@ -1,7 +1,7 @@
-import Config from './lib/config';
-import ThemeLoader from './app/themeLoader';
-import PageClassManager from './app/pageClassManager';
-import Asset from './lib/asset';
+import Config from './lib/Config';
+import ThemeLoader from './app/ThemeLoader';
+import PageClassManager from './app/PageClassManager';
+import Asset from './lib/Asset';
 
 class TypingMindUi {
 	#config;
@@ -18,7 +18,7 @@ class TypingMindUi {
 		this.#themeLoader = new ThemeLoader(this.#config);
 		this.#pageClassManager = new PageClassManager();
 
-		Asset.bypassCache(this.#config.nocache)
+		Asset.bypassCache(this.#config.nocache);
 
 		this.#pageClassManager.observe();
 		this.#loadTheme();
