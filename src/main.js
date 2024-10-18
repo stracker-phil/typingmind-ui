@@ -1,11 +1,13 @@
 import Config from './lib/Config';
+import Asset from './lib/Asset';
 import ThemeLoader from './app/ThemeLoader';
 import PageClassManager from './app/PageClassManager';
 import IconReplacer from './app/IconReplacer';
-import Asset from './lib/Asset';
+import EventSystem from './app/EventSystem';
 
 class TypingMindUi {
 	#config;
+	#eventSystem;
 	#themeLoader;
 	#pageClassManager;
 	#iconReplacer;
@@ -17,9 +19,10 @@ class TypingMindUi {
 
 		TypingMindUi.instance = this;
 		this.#config = config;
+		this.#eventSystem = new EventSystem();
 		this.#iconReplacer = new IconReplacer();
-		this.#themeLoader = new ThemeLoader(this.#config, this.#iconReplacer);
 		this.#pageClassManager = new PageClassManager();
+		this.#themeLoader = new ThemeLoader(this.#config, this.#eventSystem, this.#iconReplacer);
 
 		Asset.bypassCache(this.#config.nocache);
 

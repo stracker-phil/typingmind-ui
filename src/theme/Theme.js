@@ -1,4 +1,5 @@
 import IconReplacer from '../app/IconReplacer';
+import EventSystem, { THEME_EVENTS } from '../app/EventSystem';
 
 /**
  * Base class that all themes must extend from.
@@ -8,6 +9,11 @@ class ThemeBase {
 	 * @type {IconReplacer|null} The IconReplacer instance.
 	 */
 	#iconReplacer;
+
+	/**
+	 * @type {EventSystem} The apps event handler instance.
+	 */
+	#eventSystem;
 
 	/**
 	 * @type {Function} Bound init handler
@@ -20,19 +26,20 @@ class ThemeBase {
 	#boundCleanupHandler;
 
 	constructor() {
+		this.#eventSystem = new EventSystem();
 		this.#boundInitHandler = this.#handleInit.bind(this);
 		this.#boundCleanupHandler = this.#handleCleanup.bind(this);
 		this.#addEventListeners();
 	}
 
 	#addEventListeners() {
-		document.addEventListener('theme-init', this.#boundInitHandler);
-		document.addEventListener('theme-cleanup', this.#boundCleanupHandler);
+		this.#eventSystem.observe(THEME_EVENTS.init, this.#boundInitHandler);
+		this.#eventSystem.observe(THEME_EVENTS.cleanup, this.#boundCleanupHandler);
 	}
 
 	#removeEventListeners() {
-		document.removeEventListener('theme-init', this.#boundInitHandler);
-		document.removeEventListener('theme-cleanup', this.#boundCleanupHandler);
+		this.#eventSystem.unobserve(THEME_EVENTS.init, this.#boundInitHandler);
+		this.#eventSystem.unobserve(THEME_EVENTS.cleanup, this.#boundCleanupHandler);
 	}
 
 	/**
@@ -58,12 +65,10 @@ class ThemeBase {
 		return this.#iconReplacer;
 	}
 
-	// Default implementation of onInit (to be overridden by themes)
 	onInit() {
 		console.log('Theme initialized');
 	}
 
-	// Default implementation of onCleanup (to be overridden by themes)
 	onCleanup() {
 		console.log('Theme cleaned up');
 	}

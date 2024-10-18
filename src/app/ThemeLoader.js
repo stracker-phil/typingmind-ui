@@ -4,19 +4,19 @@
  */
 
 import Asset from '../lib/Asset';
+import { THEME_EVENTS } from './EventSystem';
 
 const CUSTOM_THEME_CLASS = 'custom-theme';
 
-const THEME_INIT_EVENT = 'theme-init';
-const THEME_CLEANUP_EVENT = 'theme-cleanup';
-
 class ThemeLoader {
 	#asset;
+	#eventSystem;
 	#iconReplacer;
 	#currentTheme = null;
 
-	constructor(config, iconReplacer) {
+	constructor(config, eventSystem, iconReplacer) {
 		this.#asset = new Asset('theme', config.origin);
+		this.#eventSystem = eventSystem;
 		this.#iconReplacer = iconReplacer;
 	}
 
@@ -38,11 +38,7 @@ class ThemeLoader {
 		try {
 			await this.#asset.load();
 
-			// Dispatch the init event after the assets have loaded
-			const initEvent = new CustomEvent(THEME_INIT_EVENT, {
-				detail: { iconReplacer: this.#iconReplacer },
-			});
-			document.dispatchEvent(initEvent);
+			this.#eventSystem.dispatch(THEME_EVENTS.init, { iconReplacer: this.#iconReplacer });
 
 			document.body.classList.add(CUSTOM_THEME_CLASS);
 		} catch (error) {
@@ -56,9 +52,7 @@ class ThemeLoader {
 			return;
 		}
 
-		// Dispatch the cleanup event
-		const cleanupEvent = new CustomEvent(THEME_CLEANUP_EVENT);
-		document.dispatchEvent(cleanupEvent);
+		this.#eventSystem.dispatch(THEME_EVENTS.cleanup);
 
 		this.#asset.unload();
 		document.body.classList.remove(CUSTOM_THEME_CLASS);
