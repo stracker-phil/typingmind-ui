@@ -1,48 +1,12 @@
-// IconReplacer.js
-
 const MUTATION_DEBOUNCE_DELAY = 50;
-
-class IconStorage {
-	#originalIcons;
-	#modifiedIcons;
-
-	constructor() {
-		this.clear();
-	}
-
-	storeOriginal(element, original) {
-		if (!this.#originalIcons.has(element)) {
-			this.#originalIcons.set(element, original);
-			this.#modifiedIcons.add(element);
-		}
-	}
-
-	getOriginal(element) {
-		return this.#originalIcons.get(element);
-	}
-
-	getAllModified() {
-		return this.#modifiedIcons;
-	}
-
-	trackModified(element) {
-		this.#modifiedIcons.add(element);
-	}
-
-	clear() {
-		this.#originalIcons = new WeakMap();
-		this.#modifiedIcons = new Set();
-	}
-}
 
 export default class IconReplacer {
 	#iconMapping = [];
-	#iconStorage;
+	#modifiedIcons = new Map();
 	#observer;
 	#debounceTimer;
 
 	constructor() {
-		this.#iconStorage = new IconStorage();
 		this.#observer = null;
 		this.#debounceTimer = null;
 	}
@@ -63,14 +27,11 @@ export default class IconReplacer {
 	}
 
 	#reset() {
-		const modifiedIcons = this.#iconStorage.getAllModified();
-		for (const svg of modifiedIcons) {
-			if (svg.__theme) {
-				svg.__theme.reset();
-			}
+		for (const [svg, theme] of this.#modifiedIcons) {
+			theme.reset();
 		}
 		this.#iconMapping = [];
-		this.#iconStorage.clear();
+		this.#modifiedIcons.clear();
 		this.#stopObserver();
 	}
 
@@ -84,7 +45,6 @@ export default class IconReplacer {
 			subtree: true,
 			attributes: true,
 		});
-		this.#replaceAllIcons();
 	}
 
 	#stopObserver() {
@@ -96,20 +56,21 @@ export default class IconReplacer {
 
 	#handleMutations(mutations) {
 		clearTimeout(this.#debounceTimer);
-
 		this.#debounceTimer = setTimeout(() => {
 			const nodesToCheck = new Set();
+
 			for (const mutation of mutations) {
-				if (mutation.type === 'childList') {
+				if (mutation.type === 'attributes') {
+					nodesToCheck.add(mutation.target);
+				} else if (mutation.type === 'childList') {
 					mutation.addedNodes.forEach(node => {
 						if (node.nodeType === Node.ELEMENT_NODE) {
 							nodesToCheck.add(node);
 						}
 					});
-				} else if (mutation.type === 'attributes') {
-					nodesToCheck.add(mutation.target);
 				}
 			}
+
 			nodesToCheck.forEach(node => this.#checkAndReplaceIcons(node));
 		}, MUTATION_DEBOUNCE_DELAY);
 	}
@@ -119,7 +80,7 @@ export default class IconReplacer {
 			return;
 		}
 		const svgs = element.querySelectorAll('svg');
-		console.log('found svg changes in dom', svgs);
+
 		for (const svg of svgs) {
 			this.#applySvgTheme(svg);
 		}
@@ -134,24 +95,26 @@ export default class IconReplacer {
 
 	#createSvgTheme(svg) {
 		const originalClone = svg.cloneNode(true);
-		this.#iconStorage.storeOriginal(svg, originalClone);
+		const config = this.#findMatch(svg);
+		let appliedIcon = '';
 
 		svg.__theme = {
 			apply: () => {
-				const config = this.#findMatch(svg);
-				if (config) {
-					const newIcon = config.replace(svg);
-					if (newIcon) {
-						this.#updateSvgContent(svg, newIcon);
-					}
+				if (!config) {
+					return;
+				}
+				const newIcon = config.replace(svg);
+
+				if (newIcon && appliedIcon !== newIcon) {
+					appliedIcon = newIcon;
+					this.#updateSvgContent(svg, newIcon);
+					this.#modifiedIcons.set(svg, svg.__theme);
 				}
 			},
 			reset: () => {
-				const original = this.#iconStorage.getOriginal(svg);
-				if (original) {
-					svg.innerHTML = original.innerHTML;
-					this.#restoreAttributes(svg, original);
-				}
+				svg.innerHTML = originalClone.innerHTML;
+				this.#restoreAttributes(svg, originalClone);
+				this.#modifiedIcons.delete(svg);
 			},
 		};
 	}
@@ -170,7 +133,6 @@ export default class IconReplacer {
 			svg.setAttribute('viewBox', newIcon.getAttribute('viewBox'));
 		}
 		svg.innerHTML = newIcon.innerHTML;
-		this.#iconStorage.trackModified(svg);
 	}
 
 	#restoreAttributes(svg, original) {
