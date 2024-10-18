@@ -1,12 +1,14 @@
 import Config from './lib/Config';
 import ThemeLoader from './app/ThemeLoader';
 import PageClassManager from './app/PageClassManager';
+import IconReplacer from './app/IconReplacer';
 import Asset from './lib/Asset';
 
 class TypingMindUi {
 	#config;
 	#themeLoader;
 	#pageClassManager;
+	#iconReplacer;
 
 	constructor(config) {
 		if (TypingMindUi.instance) {
@@ -15,7 +17,8 @@ class TypingMindUi {
 
 		TypingMindUi.instance = this;
 		this.#config = config;
-		this.#themeLoader = new ThemeLoader(this.#config);
+		this.#iconReplacer = new IconReplacer();
+		this.#themeLoader = new ThemeLoader(this.#config, this.#iconReplacer);
 		this.#pageClassManager = new PageClassManager();
 
 		Asset.bypassCache(this.#config.nocache);

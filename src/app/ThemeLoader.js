@@ -9,9 +9,11 @@ const CUSTOM_THEME_CLASS = 'custom-theme';
 
 class ThemeLoader {
 	#asset;
+	#iconReplacer;
 
-	constructor(config) {
+	constructor(config, iconReplacer) {
 		this.#asset = new Asset('theme', config.origin);
+		this.#iconReplacer = iconReplacer;
 	}
 
 	apply(theme) {
