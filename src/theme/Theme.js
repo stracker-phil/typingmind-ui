@@ -30,8 +30,15 @@ class ThemeBase {
 	 */
 	#boundRefreshHandler;
 
+	/**
+	 * @type {Object} The theme's internal state
+	 */
+	#state;
+
 	constructor() {
 		this.#eventSystem = new EventSystem();
+		this.#state = {};
+
 		this.#boundInitHandler = this.#handleInit.bind(this);
 		this.#boundCleanupHandler = this.#handleCleanup.bind(this);
 		this.#boundRefreshHandler = this.#handleRefresh.bind(this);
@@ -71,7 +78,9 @@ class ThemeBase {
 			return;
 		}
 
-		this.onRefresh(detail);
+		this.#state = { ...this.#state, ...detail };
+
+		this.onRefresh(this.#state);
 	}
 
 	/**
@@ -80,6 +89,7 @@ class ThemeBase {
 	get IconReplacer() {
 		return this.#iconReplacer;
 	}
+
 	onInit() {
 		console.log('Theme initialized');
 	}
@@ -89,6 +99,9 @@ class ThemeBase {
 	}
 
 	onRefresh(state) {
+		if (this.IconReplacer) {
+			// todo ...
+		}
 	}
 }
 
